@@ -1,0 +1,150 @@
+import java.util.Scanner;   
+                                    
+                                 
+class Variables {
+    int option = 0, dep_amt = 0, wit_amt = 0, acc_no, service_count, interest_count;
+    double money = 0, bally=0, penalty = 0, interest = 0, service_charge = 0;
+    String cust_name;
+    String acc_type;
+}
+
+class Operations extends Variables 
+{
+    void deposit() {
+        money = money + dep_amt;
+        bally = money;
+        if (acc_type.equals("savings")) { // Use .equals() for string comparison
+            if (money < 1000) {
+                penalty = (1000-money) * 5 / 1000;
+    
+            } else {
+                penalty = 0;
+            }
+        } 
+        else if (acc_type.equals("current"))
+        {
+            if (money < 5000)
+            {
+                penalty = (5000-money) * 5 / 1000;
+            } else
+            {
+                penalty = 0;
+            }
+        }
+
+        if (acc_type.equals("savings") && money >= 1000) {
+            interest_count++;
+
+            if (interest_count == 3) {
+                interest = money * 0.009;
+                interest_count = 0;
+            } else {
+                interest = 0;
+            }
+        } else if (acc_type.equals("current") && money >= 5000) {
+            interest_count++;
+
+            if (interest_count == 3) {
+                interest = money * 0.009;
+                interest_count = 0;
+            } else {
+                interest = 0;
+            }
+        }
+    }
+
+    void withdraw() {
+        money = money - wit_amt;
+        bally = money;
+        if (acc_type.equals("savings")) {
+            if (money < 1000) {
+                penalty = (1000-money) * 5 / 1000;
+            } else {
+                penalty = 0;
+            }
+        } else if (acc_type.equals("current")) {
+            if (money < 5000) {
+                penalty = (5000 - money) * 5 / 1000;
+            } else {
+                penalty = 0;
+            }
+        }
+
+        service_count++;
+
+        if (service_count == 3) {
+            service_charge = money * 0.025;
+            service_count = 0;
+        } else {
+            service_charge = 0;
+        }
+    }
+}
+
+public class Main {
+    public static void main(String args[]) {
+        Scanner scanner = new Scanner(System.in);
+        Operations op = new Operations();
+
+        System.out.println("Please enter your name: ");
+        op.cust_name = scanner.nextLine();
+
+        System.out.println("Please enter account number: ");
+        op.acc_no = scanner.nextInt();
+
+        System.out.println("Please enter the type of account: ");
+        op.acc_type = scanner.next();
+        
+        if (op.acc_type.equals("savings")) {
+            op.money = 1000; // Initial balance for savings account
+        } else if (op.acc_type.equals("current")) {
+            op.money = 5000; // Initial balance for current account
+        }
+
+        do {
+            System.out.println("Welcome to VIT Student Bank!\n" +
+                    "1. Deposit\n" +
+                    "2. Withdraw\n" +
+                    "3. Balance Check\n" +
+                    "4. Exit\n");
+
+            System.out.println("Please enter the operation you wish to perform:");
+            op.option = scanner.nextInt();
+
+            switch (op.option) {
+                case 1:
+                    // Deposit
+                    System.out.println("Please enter the amount you wish to deposit: ");
+                    op.dep_amt = scanner.nextInt();
+                    op.deposit();
+                    op.money = op.money - op.penalty;
+                    op.money = op.money + op.interest;
+                    System.out.println("Balance is: " + op.money);
+                    System.out.println("Penalty is: " + op.penalty);
+                    System.out.println("Interest is: " + op.interest);
+                    break;
+
+                case 2:
+                    // Withdraw
+                    System.out.println("Please enter the amount you wish to withdraw: ");
+                    op.wit_amt = scanner.nextInt();
+                    op.withdraw();
+                    op.money = op.money - op.penalty;
+                    op.money = op.money - op.service_charge;
+                    System.out.println("Balance is: " + op.money);
+                    System.out.println("Penalty is: " + op.penalty);
+                    System.out.println("Service is: " + op.service_charge);
+                    break;
+
+                case 3:
+                    System.out.println("The balance amount in your account is: " + op.money);
+                    break;
+                    
+                case 4:
+                    System.out.println("Thank you for using VIT Student Bank!")
+            }
+        } while (op.option != 4);
+        
+        scanner.close();
+    }
+}
